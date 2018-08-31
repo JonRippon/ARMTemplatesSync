@@ -1,0 +1,45 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "serverName": {
+            "value": "azp-ms-sql-r001"
+        },
+        "location": {
+            "value": "northeurope"
+        },
+        "administratorLogin": {
+            "value": "prssa"
+        },
+        "administratorLoginPassword": {
+            "value": "vo8kUI1ta2Cd*ae6fA!qOMLXDSVcI#in"
+        },
+         "projectTag": {
+            "value": "DT"
+        },
+        "projectSubTag": {
+            "value": "Shared"
+        },
+        "environmentTag": {
+            "value": "Staging"
+        },
+        "addDefaultPRSRules": {
+            "value": true
+        },
+        "allowAzureServices":{
+            "value": true
+        },
+        "storageEndpoint":{
+            "value": "https://stgrecsqlaudit01.blob.core.windows.net"
+        },
+        "auditStorageAccountName":{
+            "value": "stgrecsqlaudit01"
+        },
+        "retentionDays":{
+            "value": 365
+        },
+        "enableATP": {
+            "value": false
+        }
+    }
+}

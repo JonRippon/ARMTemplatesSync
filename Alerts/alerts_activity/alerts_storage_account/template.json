@@ -1,0 +1,136 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "actionGroupName": {
+      "type": "string",
+      "defaultValue":  "DefaultActionGroup",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name for the Action group."
+      }
+    },
+    "listKeysStorageAccountLogAlert": {
+      "type": "string",
+      "defaultValue": "listKeysStorageAccountLogAlertName",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name for the Activity log alert."
+      }
+    },
+    "regenerateKeysStorageAccountLogAlert": {
+      "type": "string",
+      "defaultValue": "regenerateKeysStorageAccountLogAlertName",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name for the Activity log alert."
+      }
+    },
+    "deleteStorageAccountLogAlert": {
+      "type": "string",
+      "defaultValue": "deleteStorageAccountLogAlertName",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name for the Activity log alert."
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Insights/activityLogAlerts",
+      "apiVersion": "2017-04-01",
+      "name": "[parameters('listKeysStorageAccountLogAlert')]",
+      "location": "Global",
+      "properties": {
+        "enabled": true,
+        "scopes": [
+          "[subscription().id]"
+        ],
+        "condition": {
+          "allOf": [
+            {
+              "field": "category",
+              "equals": "Administrative"
+            },
+            {
+                "field": "operationName",
+                "equals": "Microsoft.Storage/storageAccounts/listkeys/action"
+              }
+            
+          ]
+        },
+        "actions": {
+          "actionGroups": [
+            {
+              "actionGroupId": "[resourceId('Microsoft.Insights/actionGroups', parameters('actionGroupName'))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Insights/activityLogAlerts",
+      "apiVersion": "2017-04-01",
+      "name": "[parameters('regenerateKeysStorageAccountLogAlert')]",
+      "location": "Global",
+      "properties": {
+        "enabled": true,
+        "scopes": [
+          "[subscription().id]"
+        ],
+        "condition": {
+          "allOf": [
+            {
+              "field": "category",
+              "equals": "Administrative"
+            },
+            {
+                "field": "operationName",
+                "equals": "Microsoft.Storage/storageAccounts/regeneratekey/action"
+              }
+            
+          ]
+        },
+        "actions": {
+          "actionGroups": [
+            {
+              "actionGroupId": "[resourceId('Microsoft.Insights/actionGroups', parameters('actionGroupName'))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Insights/activityLogAlerts",
+      "apiVersion": "2017-04-01",
+      "name": "[parameters('deleteStorageAccountLogAlert')]",
+      "location": "Global",
+      "properties": {
+        "enabled": true,
+        "scopes": [
+          "[subscription().id]"
+        ],
+        "condition": {
+          "allOf": [
+            {
+              "field": "category",
+              "equals": "Administrative"
+            },
+            {
+                "field": "operationName",
+                "equals": "Microsoft.Storage/storageAccounts/delete"
+              }
+            
+          ]
+        },
+        "actions": {
+          "actionGroups": [
+            {
+              "actionGroupId": "[resourceId('Microsoft.Insights/actionGroups', parameters('actionGroupName'))]"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

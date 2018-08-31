@@ -1,0 +1,152 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "administratorLogin": {
+            "type": "string"
+        },
+        "administratorLoginPassword": {
+            "type": "securestring"
+        },
+        "location": {
+            "type": "string"
+        },
+        "serverName": {
+            "type": "string"
+        },
+        "enableATP": {
+            "type": "bool",
+            "defaultValue": false
+        },
+        "allowAzureIps": {
+            "type": "bool",
+            "defaultValue": true
+        },
+        "storageEndpoint":{
+            "type": "string"
+        },
+        "retentionDays":{
+            "type": "int"
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2015-05-01-preview",
+            "location": "[parameters('location')]",
+            "name": "[parameters('serverName')]",
+            "type": "Microsoft.Sql/servers",
+            "properties": {
+                "administratorLogin": "[parameters('administratorLogin')]",
+                "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
+                "version": "12.0"
+            },
+            "resources": [
+                {
+                    "condition": "[parameters('allowAzureIps')]",
+                    "apiVersion": "2015-05-01-preview",
+                    "dependsOn": [
+                        "[concat('Microsoft.Sql/servers/', parameters('serverName'))]"
+                    ],
+                    "location": "[parameters('location')]",
+                    "name": "ERNAT",
+                    "properties": {
+                        "endIpAddress": "104.210.236.5",
+                        "startIpAddress": "104.210.236.5"
+                    },
+                    "type": "firewallrules"
+                },
+                {
+                    "condition": "[parameters('allowAzureIps')]",
+                    "apiVersion": "2015-05-01-preview",
+                    "dependsOn": [
+                        "[concat('Microsoft.Sql/servers/', parameters('serverName'))]"
+                    ],
+                    "location": "[parameters('location')]",
+                    "name": "ERNAT2",
+                    "properties": {
+                        "endIpAddress": "104.210.237.5",
+                        "startIpAddress": "104.210.237.5"
+                    },
+                    "type": "firewallrules"
+                },
+                {
+                    "condition": "[parameters('allowAzureIps')]",
+                    "apiVersion": "2015-05-01-preview",
+                    "dependsOn": [
+                        "[concat('Microsoft.Sql/servers/', parameters('serverName'))]"
+                    ],
+                    "location": "[parameters('location')]",
+                    "name": "INT01",
+                    "properties": {
+                        "endIpAddress": "40.11.203.214",
+                        "startIpAddress": "40.11.203.214"
+                    },
+                    "type": "firewallrules"
+                },
+                {
+                    "condition": "[parameters('allowAzureIps')]",
+                    "apiVersion": "2015-05-01-preview",
+                    "dependsOn": [
+                        "[concat('Microsoft.Sql/servers/', parameters('serverName'))]"
+                    ],
+                    "location": "[parameters('location')]",
+                    "name": "PRS Guest Wireless",
+                    "properties": {
+                        "endIpAddress": "213.133.136.198",
+                        "startIpAddress": "213.133.136.198"
+                    },
+                    "type": "firewallrules"
+                },
+                {
+                    "condition": "[parameters('allowAzureIps')]",
+                    "apiVersion": "2015-05-01-preview",
+                    "dependsOn": [
+                        "[concat('Microsoft.Sql/servers/', parameters('serverName'))]"
+                    ],
+                    "location": "[parameters('location')]",
+                    "name": "AllowAllWindowsAzureIps_1",
+                    "properties": {
+                        "endIpAddress": "0.0.0.0",
+                        "startIpAddress": "0.0.0.0"
+                    },
+                    "type": "firewallrules"
+                },
+                {
+                    "name": "[concat(parameters('serverName'), '/databases/auditingSettings')]",
+                    "type": "Microsoft.Sql/servers/databases/auditingSettings",
+                    "dependsOn": [
+                        "[concat('Microsoft.Sql/servers/', parameters('serverName'))]"
+                    ],
+                    "apiVersion": "2015-05-01-preview",
+                    "properties": {
+                      "state": "string",
+                      "storageEndpoint": "[parameters('storageEndpoint')]",
+                      "storageAccountAccessKey": "string",
+                      "retentionDays": "[parameters('retentionDays')]",
+                      "auditActionsAndGroups": [
+                        "string"
+                      ],
+                      "storageAccountSubscriptionId": "string",
+                      "isStorageSecondaryKeyInUse": "boolean"
+                    }
+                  },
+                {
+                    "condition": "[parameters('enableATP')]",
+                    "apiVersion": "2015-05-01-preview",
+                    "type": "securityAlertPolicies",
+                    "name": "Default",
+                    "dependsOn": [
+                        "[concat('Microsoft.Sql/servers/', parameters('serverName'))]"
+                    ],
+                    "properties": {
+                        "state": "Enabled",
+                        "disabledAlerts": [],
+                        "emailAddresses": [],
+                        "emailAccountAdmins": true
+                    }
+                }
+            ]
+        }
+    ],
+    "variables": {}
+}

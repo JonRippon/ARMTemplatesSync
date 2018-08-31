@@ -1,0 +1,21 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vnetName": {
+      "value": "vnet-prd-network"
+    },
+    "vnetAddressPrefix": {
+      "value": "10.202.0.0/23"
+    },
+    "subnet1Name": {
+      "value": "snet-t-prd"
+    },
+    "subnet1Prefix": {
+      "value": "10.202.0.0/24"
+    },
+    "DNSServerAddress":{
+      "value": "10.201.1.132"
+    }
+  }
+}

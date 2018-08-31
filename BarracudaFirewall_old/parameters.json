@@ -1,0 +1,48 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "fwVmName": {
+            "value": "azclamgtfwl01"
+        },
+        "fwVmSize_Standard_LRS": {
+            "value": "Standard_A1"
+        },
+        "fwVmAddress": {
+            "value": "172.16.16.193"
+        },
+        "fwVmRootPasswd": {
+            "value": "e2bLLw&ER%bm"
+        },
+        "fwSubnetName": {
+            "value": "snet-t-mgt-gw"
+        },
+        "fwSubnetAddress": {
+            "value": "172.16.16.192/27"
+        },
+        "publicIpName": {
+            "value": "pip-mgt-fwl01"
+        },
+        "publicIpDnsName": {
+            "value": "pip-mgtfwl01"
+        },
+        "publicIpAddressType": {
+            "value": "Static"
+        },
+        "newStorageAccountName": {
+            "value": "stomgtfw01"
+        },
+        "newStorageAccountType": {
+            "value": "Standard_LRS"
+        },
+        "vnetName": {
+            "value": "vnet-mgt-network"
+        },
+        "vnetAddressSpace": {
+            "value": "172.16.16.0/24"
+        },
+        "location": {
+            "value": "northeurope"
+        }
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "actionGroupName": {
+            "value": "DefaultActionGroup"
+        },
+        "createVirtualMachineLogAlert": {
+            "value": "createVirtualMachineLogAlertName"
+        },
+        "deleteVirtualMachineLogAlert": {
+            "value": "deleteVirtualMachineLogAlertName"
+        },
+        "startVirtualMachineLogAlert": {
+            "value": "startVirtualMachineLogAlertName"
+        },
+        "stopVirtualMachineLogAlert": {
+            "value": "stopVirtualMachineLogAlertName"
+        }
+    }
+}

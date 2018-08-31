@@ -1,0 +1,77 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value":"northeurope"
+    },
+    "adminUsername": {
+      "value": "NESAdmin"
+    },
+    "adminPassword": {
+      "value": "z8Q%pu!xc9De"
+    },
+    "virtualMachineName": {
+      "value": "aznesdevsrv01"
+    },
+    "virtualMachineSize": {
+      "value": "Standard_B2s"
+    },
+    "tagValues": {
+      "value": {
+        "Dept": "Managed Services",
+        "Environment": "Production",
+        "Monitored": "TRUE",
+        "ServerRole": "GeneralPurpose"
+      }
+    },
+    "networkInterfaceName": {
+      "value": "aznesdevsrv01732"
+    },
+    "virtualNetworkName": {
+      "value": "vnet-dev-network"
+    },
+    "vnetRG": {
+      "value": "rg-dev-network"
+    },
+    "subnetName": {
+      "value": "snet-t-dev"
+    },
+    "autoEmail": {
+      "value": "jonathan.rippon@advancedcloudlab.com"
+    },
+    "autoTime": {
+      "value": "1800"
+    },
+    "autoMinutes": {
+      "value": 30
+    },
+    "domainName": {
+      "value": "Pension-Nest.Net"
+    },
+    "domainOuPath": {
+      "value": "OU=AADDC Computers,DC=Pension-Nest,DC=Net"
+    },
+    "domainUser": {
+      "value": "svc-DomainJoin@pension-nest.net"
+    },
+    "domainPassword": {
+      "value": "uLidIon44isRA!!"
+    },
+    "keyVault": {
+      "value": "KV-MGTKeyVault"
+    },
+    "keyVaultRG": {
+      "value": "rg-mgt-accounts"
+    },
+    "chocoPackages": {
+      "value": "powerbi;python2;python3;jre8;notepadplusplus.install;textpad;eclipse;atom"
+    },
+    "setupChocolateyScriptFileName": {
+      "value": "SetupChocolatey2016.ps1"
+    },
+    "setupChocolatelyScriptLocation": {
+      "value": "https://raw.githubusercontent.com/paulmackinnon-adv365/scripts/master/"
+    }
+  }
+}

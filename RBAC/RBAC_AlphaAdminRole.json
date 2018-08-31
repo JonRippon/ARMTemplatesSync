@@ -1,0 +1,20 @@
+{
+    "Name":  "AlphaPlus - Read and Write Role",
+    "IsCustom":  true,
+    "Description":  "Makes you Owner",
+    "Actions":  [
+                    "*"
+                ],
+    "NotActions":  [
+
+                   ],
+    "DataActions":  [
+
+                    ],
+    "NotDataActions":  [
+
+                       ],
+    "AssignableScopes":  [
+                             "/subscriptions/f3692419-df7f-427d-87b3-d3c003784d75"
+                         ]
+}

@@ -1,0 +1,75 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "projectTag": {
+          "type": "string",
+          "metadata": {
+            "description": "The project that resources in this template belong to"
+          }
+        },
+        "projectSubTag": {
+          "type": "string",
+         "metadata": {
+            "description": "The application that resources in this template belong to"
+          }
+        },
+        "environmentTag": {
+           "type": "string",
+         "metadata": {
+            "description": "The environment that resources in this template belong to"
+          }
+        },
+        "accountType": {
+            "type": "string"
+        },
+        "kind": {
+            "type": "string"
+        },
+        "accessTier": {
+            "type": "string"
+        },
+        "httpsTrafficOnlyEnabled": {
+            "type": "bool"
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2018-02-01",
+            "name": "[parameters('name')]",
+            "location": "[parameters('location')]",
+            "tags": {
+                "project": "[parameters('projectTag')]",
+                "project-sub": "[parameters('projectSubTag')]",
+                "environment": "[parameters('environmentTag')]"
+              },
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "[parameters('accountType')]"
+            },
+            "kind": "[parameters('kind')]",
+            "properties": {
+                "supportsHttpsTrafficOnly": "[parameters('httpsTrafficOnlyEnabled')]",
+                "accessTier": "[parameters('accessTier')]",
+                "encryption": {
+                    "services": {
+                        "blob": {
+                            "enabled": true
+                        },
+                        "file": {
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                }
+            },
+            "dependsOn": []
+        }
+    ]
+}

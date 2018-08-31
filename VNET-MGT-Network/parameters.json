@@ -1,0 +1,39 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vnetName": {
+      "value": "vnet-mgt-network"
+    },
+    "vnetAddressPrefix": {
+      "value": "10.201.0.0/23"
+    },
+    "subnet1Name": {
+      "value": "snet-t-mgt-prd"
+    },
+    "subnet1Prefix": {
+      "value": "10.201.0.0/24"
+    },
+    "subnet2Name": {
+      "value": "snet-t-mgt-ad"
+    },
+    "subnet2Prefix": {
+      "value": "10.201.1.64/26"
+    },
+    "subnet3Name": {
+      "value": "snet-t-mgt-gw"
+    },
+    "subnet3Prefix": {
+      "value": "10.201.1.0/26"
+    },
+    "subnet4Name": {
+      "value": "snet-u-mgt-utn"
+    },
+    "subnet4Prefix": {
+      "value": "10.201.1.128/26"
+    },
+    "DNSServerAddress":{
+      "value": "10.201.1.132"
+    }
+  }
+}

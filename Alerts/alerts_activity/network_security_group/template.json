@@ -1,0 +1,56 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "actionGroupName": {
+      "type": "string",
+      "defaultValue":  "DefaultActionGroup",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name for the Action group."
+      }
+    },
+    "deleteNetworkSecurityGroupLogAlert": {
+      "type": "string",
+      "defaultValue": "deleteNetworkSecurityGroupLogAlertName",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name for the Activity log alert."
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Insights/activityLogAlerts",
+      "apiVersion": "2017-04-01",
+      "name": "[parameters('deleteNetworkSecurityGroupLogAlert')]",
+      "location": "Global",
+      "properties": {
+        "enabled": true,
+        "scopes": [
+          "[subscription().id]"
+        ],
+        "condition": {
+          "allOf": [
+            {
+              "field": "category",
+              "equals": "Administrative"
+            },
+            {
+                "field": "operationName",
+                "equals": "Microsoft.Network/networkSecurityGroups/delete"
+              }
+            
+          ]
+        },
+        "actions": {
+          "actionGroups": [
+            {
+              "actionGroupId": "[resourceId('Microsoft.Insights/actionGroups', parameters('actionGroupName'))]"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

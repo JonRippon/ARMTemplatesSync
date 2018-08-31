@@ -1,0 +1,67 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "serviceName": {
+            "value": "AZP-MS-AGW-S001"
+        },
+        "publisherEmail": {
+            "value": "example@prsformusic.com"
+        },
+        "publisherName": {
+            "value": "PRS-SG"
+        },
+        "sku": {
+            "value": "Developer"
+        },
+        "skuCount": {
+            "value": "1"
+        },
+        "projectTag": {
+            "value": "DT"
+        },
+        "projectSubTag": {
+            "value": "Shared"
+        },
+        "environmentTag": {
+            "value": "Staging"
+        },
+        "vnetResourceGroup": {
+            "value": "AZI-RG-NETWORKING"
+        },
+        "vnetName": {
+            "value": "EXT01"
+        },
+        "subnetName": {
+            "value": "EXT01-STAG01-AGW01"
+        },
+        "clientID": {
+            "value": "c8a7f899-41b9-4bc8-a3c6-fbb0b11bf0fe"
+        },
+        "clientSecret": {
+            "reference": {
+                "keyVault": {
+                  "id": "/subscriptions/43f36706-79c0-4f23-9853-a28102e5ef94/resourceGroups/AZE-RG-SHARED-SG-DEPLOYMENTS-01/providers/Microsoft.KeyVault/vaults/kvtsgdeployments"
+                },
+                "secretName": "SPN-AZP-MS-AGW-S001-DevPortalAADProvider"
+              }
+        },
+        "certURI": {
+            "reference": {
+                "keyVault": {
+                  "id": "/subscriptions/43f36706-79c0-4f23-9853-a28102e5ef94/resourceGroups/AZE-RG-SHARED-PRD-KV-CERTIFICATES-01/providers/Microsoft.KeyVault/vaults/kvtprdcertificates"
+                },
+                "secretName": "WildcardPRSForMusicCom"
+              }
+        },
+        "apimName": {
+            "value": "agw-s001"
+        },
+        "domainSuffix": {
+            "value": "sg01.prsformusic.com"
+        },
+        "aadTenant":{
+            "value": "PRSO365.onmicrosoft.com"
+        }
+    }
+}

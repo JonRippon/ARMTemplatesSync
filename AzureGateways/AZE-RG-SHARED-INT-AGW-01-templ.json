@@ -1,0 +1,129 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "serviceName": {
+            "type": "string",
+            "minLength": 1,
+            "defaultValue": "exampleapimentities",
+            "metadata": {
+                "description": "The name of the service"
+            }
+        },
+        "publisherEmail": {
+            "type": "string",
+            "minLength": 1,
+            "defaultValue": "example@prsformusic.com",
+            "metadata": {
+                "description": "The email address of the owner of the service"
+            }
+        },
+        "publisherName": {
+            "type": "string",
+            "minLength": 1,
+            "defaultValue": "exampleapimentities",
+            "metadata": {
+                "description": "The name of the owner of the service"
+            }
+        },
+        "sku": {
+            "type": "string",
+            "allowedValues": [
+                "Developer",
+                "Standard",
+                "Premium"
+            ],
+            "defaultValue": "Standard",
+            "metadata": {
+                "description": "The pricing tier of this API Management service"
+            }
+        },
+        "skuCount": {
+            "type": "string",
+            "allowedValues": [
+                "1",
+                "2"
+            ],
+            "defaultValue": "1",
+            "metadata": {
+                "description": "The instance size of this API Management service."
+            }
+        },
+        "projectTag": {
+            "type": "string",
+            "metadata": {
+                "description": "The project that resources in this template belong to"
+            }
+        },
+        "projectSubTag": {
+            "type": "string",
+            "metadata": {
+                "description": "The application that resources in this template belong to"
+            }
+        },
+        "environmentTag": {
+            "type": "string",
+            "metadata": {
+                "description": "The environment that resources in this template belong to"
+            }
+        },
+        "clientSecret": {
+            "type": "string",
+            "metadata": {
+                "description": "Client or app secret registered with this authorization server"
+            }
+        },
+        "clientID": {
+            "type": "string",
+            "metadata": {
+                "description": "Client or app id registered with this authorization server."
+            }
+        },
+        "aadTenant": {
+            "type": "string",
+            "metadata": {
+                "description": "Allowed aad tennat"
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "apiVersion": "2017-03-01",
+            "name": "[parameters('serviceName')]",
+            "type": "Microsoft.ApiManagement/service",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "project": "[parameters('projectTag')]",
+                "project-sub": "[parameters('projectSubTag')]",
+                "environment": "[parameters('environmentTag')]"
+            },
+            "sku": {
+                "name": "[parameters('sku')]",
+                "capacity": "[parameters('skuCount')]"
+            },
+            "properties": {
+                "publisherEmail": "[parameters('publisherEmail')]",
+                "publisherName": "[parameters('publisherName')]"
+            },
+            "resources": [
+                {
+                    "name": "aad",
+                    "dependsOn": [
+                        "[concat('Microsoft.ApiManagement/service/', parameters('serviceName'))]"
+                    ],
+                    "type": "identityProviders",
+                    "apiVersion": "2017-03-01",
+                    "properties": {
+                        "type": "aad",
+                        "allowedTenants": [
+                            "[parameters('aadTenant')]"
+                        ],
+                        "clientId": "[parameters('clientID')]",
+                        "clientSecret": "[parameters('clientSecret')]"
+                    }
+                }
+            ]
+        }
+    ]
+}

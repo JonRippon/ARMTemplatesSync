@@ -1,0 +1,77 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value":"northeurope"
+    },
+    "adminUsername": {
+      "value": "CLALocAdmin"
+    },
+    "adminPassword": {
+      "value": "!GbXwy13d7Co"
+    },
+    "virtualMachineName": {
+      "value": "azclamgtsrv01"
+    },
+    "virtualMachineSize": {
+      "value": "Standard_B2s"
+    },
+    "tagValues": {
+      "value": {
+        "Owner": "ADV",
+        "Environment": "PRD",
+        "Monitored": "TRUE",
+        "ServerRole": "GeneralPurpose"
+      }
+    },
+    "networkInterfaceName": {
+      "value": "azclamgtsrv01732"
+    },
+    "virtualNetworkName": {
+      "value": "vnet-mgt-network"
+    },
+    "vnetRG": {
+      "value": "rg-mgt-network"
+    },
+    "subnetName": {
+      "value": "snet-t-mgt-prd"
+    },
+    "autoEmail": {
+      "value": "jonathan.rippon@advancedcloudlab.com"
+    },
+    "autoTime": {
+      "value": "1800"
+    },
+    "autoMinutes": {
+      "value": 30
+    },
+    "domainName": {
+      "value": "CLAAzure.com"
+    },
+    "domainOuPath": {
+      "value": "OU=AADDC Computers,DC=claazure,DC=com"
+    },
+    "domainUser": {
+      "value": "svc-DomainJoin@claazure.com"
+    },
+    "domainPassword": {
+      "value": "Z2c5&Cf%1J$i"
+    },
+    "keyVault": {
+      "value": "KV-MGTCLAKeyVault"
+    },
+    "keyVaultRG": {
+      "value": "rg-mgt-accounts"
+    },
+    "chocoPackages": {
+      "value": "googlechrome;putty;visualstudiocode;windowsazurepowershell;notepadplusplus.install;textpad;firefox"
+    },
+    "setupChocolateyScriptFileName": {
+      "value": "SetupChocolatey2016.ps1"
+    },
+    "setupChocolatelyScriptLocation": {
+      "value": "https://raw.githubusercontent.com/paulmackinnon-adv365/scripts/master/"
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "serviceName": {
+            "value": "AZP-MS-AGW-Q001"
+        },
+        "publisherEmail": {
+            "value": "example@prsformusic.com"
+        },
+        "publisherName": {
+            "value": "PRS-QA"
+        },
+        "sku": {
+            "value": "Developer"
+        },
+        "skuCount": {
+            "value": "1"
+        },
+        "projectTag": {
+            "value": "DT"
+        },
+        "projectSubTag": {
+            "value": "Shared"
+        },
+        "environmentTag": {
+            "value": "QA"
+        },
+        "clientSecret": {
+            "reference": {
+                "keyVault": {
+                  "id": "/subscriptions/43f36706-79c0-4f23-9853-a28102e5ef94/resourceGroups/AZE-RG-SHARED-QA-DEPLOYMENTS-01/providers/Microsoft.KeyVault/vaults/kvtqadeployments"
+                },
+                "secretName": "SPN-AZP-MS-AGW-Q001-DevPortalAADProvider"
+              }
+        },
+        "clientID": {
+            "value": "866b8a4a-5d66-45d4-bb49-eabc266485c0"
+        },
+        "aadTenant":{
+            "value": "PRSO365.onmicrosoft.com"
+        }
+    }
+}

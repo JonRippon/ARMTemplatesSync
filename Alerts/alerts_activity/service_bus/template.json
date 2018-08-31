@@ -1,0 +1,136 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "actionGroupName": {
+      "type": "string",
+      "defaultValue":  "DefaultActionGroup",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name for the Action group."
+      }
+    },
+    "createauthorizationRuleServiceBusLogAlert": {
+      "type": "string",
+      "defaultValue": "createauthorizationRuleServiceBusLogAlertName",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name for the Activity log alert."
+      }
+    },
+    "deleteTopicServiceBusLogAlert": {
+      "type": "string",
+      "defaultValue": "deleteTopicServiceBusLogAlertName",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name for the Activity log alert."
+      }
+    },
+    "deleteQueueServiceBusLogAlert": {
+      "type": "string",
+      "defaultValue": "deleteQueueServiceBusLogAlertName",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name for the Activity log alert."
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Insights/activityLogAlerts",
+      "apiVersion": "2017-04-01",
+      "name": "[parameters('createauthorizationRuleServiceBusLogAlert')]",
+      "location": "Global",
+      "properties": {
+        "enabled": true,
+        "scopes": [
+          "[subscription().id]"
+        ],
+        "condition": {
+          "allOf": [
+            {
+              "field": "category",
+              "equals": "Administrative"
+            },
+            {
+                "field": "operationName",
+                "equals": "Microsoft.ServiceBus/namespaces/AuthorizationRules/write"
+              }
+            
+          ]
+        },
+        "actions": {
+          "actionGroups": [
+            {
+              "actionGroupId": "[resourceId('Microsoft.Insights/actionGroups', parameters('actionGroupName'))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Insights/activityLogAlerts",
+      "apiVersion": "2017-04-01",
+      "name": "[parameters('deleteTopicServiceBusLogAlert')]",
+      "location": "Global",
+      "properties": {
+        "enabled": true,
+        "scopes": [
+          "[subscription().id]"
+        ],
+        "condition": {
+          "allOf": [
+            {
+              "field": "category",
+              "equals": "Administrative"
+            },
+            {
+                "field": "operationName",
+                "equals": "Microsoft.ServiceBus/namespaces/topics/Delete"
+              }
+            
+          ]
+        },
+        "actions": {
+          "actionGroups": [
+            {
+              "actionGroupId": "[resourceId('Microsoft.Insights/actionGroups', parameters('actionGroupName'))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Insights/activityLogAlerts",
+      "apiVersion": "2017-04-01",
+      "name": "[parameters('deleteQueueServiceBusLogAlert')]",
+      "location": "Global",
+      "properties": {
+        "enabled": true,
+        "scopes": [
+          "[subscription().id]"
+        ],
+        "condition": {
+          "allOf": [
+            {
+              "field": "category",
+              "equals": "Administrative"
+            },
+            {
+                "field": "operationName",
+                "equals": "Microsoft.ServiceBus/namespaces/queues/Delete"
+              }
+            
+          ]
+        },
+        "actions": {
+          "actionGroups": [
+            {
+              "actionGroupId": "[resourceId('Microsoft.Insights/actionGroups', parameters('actionGroupName'))]"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,216 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "actionGroupName": {
+      "type": "string",
+      "defaultValue":  "DefaultActionGroup",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name for the Action group."
+      }
+    },
+    "generatePinRecoveryServicesVaultLogAlert": {
+      "type": "string",
+      "defaultValue": "generatePinRecoveryServicesVaultLogAlertName",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name for the Activity log alert."
+      }
+    },
+    "restoreRecoveryServicesVaultLogAlert": {
+      "type": "string",
+      "defaultValue": "restoreRecoveryServicesVaultLogAlertName",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name for the Activity log alert."
+      }
+    },
+    "deleteRecoveryServicesVaultLogAlert": {
+      "type": "string",
+      "defaultValue": "deleteRecoveryServicesVaultLogAlertName",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name for the Activity log alert."
+      }
+    },
+    "getCredentialsRecoveryServicesVaultLogAlert": {
+      "type": "string",
+      "defaultValue": "getCredentialsRecoveryServicesVaultLogAlertName",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name for the Activity log alert."
+      }
+    },
+    "restoreFileRecoveryServicesVaultLogAlert": {
+      "type": "string",
+      "defaultValue": "restoreFileRecoveryServicesVaultLogAlertName",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name for the Activity log alert."
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Insights/activityLogAlerts",
+      "apiVersion": "2017-04-01",
+      "name": "[parameters('generatePinRecoveryServicesVaultLogAlert')]",
+      "location": "Global",
+      "properties": {
+        "enabled": true,
+        "scopes": [
+          "[subscription().id]"
+        ],
+        "condition": {
+          "allOf": [
+            {
+              "field": "category",
+              "equals": "Administrative"
+            },
+            {
+                "field": "operationName",
+                "equals": "Microsoft.RecoveryServices/vaults/backupSecurityPIN/action"
+              }
+            
+          ]
+        },
+        "actions": {
+          "actionGroups": [
+            {
+              "actionGroupId": "[resourceId('Microsoft.Insights/actionGroups', parameters('actionGroupName'))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Insights/activityLogAlerts",
+      "apiVersion": "2017-04-01",
+      "name": "[parameters('restoreRecoveryServicesVaultLogAlert')]",
+      "location": "Global",
+      "properties": {
+        "enabled": true,
+        "scopes": [
+          "[subscription().id]"
+        ],
+        "condition": {
+          "allOf": [
+            {
+              "field": "category",
+              "equals": "Administrative"
+            },
+            {
+                "field": "operationName",
+                "equals": "Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers/protectedItems/recoveryPoints/restore/action"
+              }
+            
+          ]
+        },
+        "actions": {
+          "actionGroups": [
+            {
+              "actionGroupId": "[resourceId('Microsoft.Insights/actionGroups', parameters('actionGroupName'))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Insights/activityLogAlerts",
+      "apiVersion": "2017-04-01",
+      "name": "[parameters('deleteRecoveryServicesVaultLogAlert')]",
+      "location": "Global",
+      "properties": {
+        "enabled": true,
+        "scopes": [
+          "[subscription().id]"
+        ],
+        "condition": {
+          "allOf": [
+            {
+              "field": "category",
+              "equals": "Administrative"
+            },
+            {
+                "field": "operationName",
+                "equals": "Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers/protectedItems/delete"
+              }
+            
+          ]
+        },
+        "actions": {
+          "actionGroups": [
+            {
+              "actionGroupId": "[resourceId('Microsoft.Insights/actionGroups', parameters('actionGroupName'))]"
+            }
+          ]
+        }
+      }
+    },    
+    {
+      "type": "Microsoft.Insights/activityLogAlerts",
+      "apiVersion": "2017-04-01",
+      "name": "[parameters('getCredentialsRecoveryServicesVaultLogAlert')]",
+      "location": "Global",
+      "properties": {
+        "enabled": true,
+        "scopes": [
+          "[subscription().id]"
+        ],
+        "condition": {
+          "allOf": [
+            {
+              "field": "category",
+              "equals": "Administrative"
+            },
+            {
+                "field": "operationName",
+                "equals": "Microsoft.RecoveryServices/vaults/certificates/write"
+              }
+            
+          ]
+        },
+        "actions": {
+          "actionGroups": [
+            {
+              "actionGroupId": "[resourceId('Microsoft.Insights/actionGroups', parameters('actionGroupName'))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Insights/activityLogAlerts",
+      "apiVersion": "2017-04-01",
+      "name": "[parameters('restoreFileRecoveryServicesVaultLogAlert')]",
+      "location": "Global",
+      "properties": {
+        "enabled": true,
+        "scopes": [
+          "[subscription().id]"
+        ],
+        "condition": {
+          "allOf": [
+            {
+              "field": "category",
+              "equals": "Administrative"
+            },
+            {
+                "field": "operationName",
+                "equals": "Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers/protectedItems/recoveryPoints/provisionInstantItemRecovery/action"
+              }
+            
+          ]
+        },
+        "actions": {
+          "actionGroups": [
+            {
+              "actionGroupId": "[resourceId('Microsoft.Insights/actionGroups', parameters('actionGroupName'))]"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

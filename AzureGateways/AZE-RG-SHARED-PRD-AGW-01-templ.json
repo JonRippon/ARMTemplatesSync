@@ -1,0 +1,202 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "serviceName": {
+            "type": "string",
+            "minLength": 1,
+            "defaultValue": "exampleapimentities",
+            "metadata": {
+                "description": "The name of the service"
+            }
+        },
+        "publisherEmail": {
+            "type": "string",
+            "minLength": 1,
+            "defaultValue": "example@prsformusic.com",
+            "metadata": {
+                "description": "The email address of the owner of the service"
+            }
+        },
+        "publisherName": {
+            "type": "string",
+            "minLength": 1,
+            "defaultValue": "exampleapimentities",
+            "metadata": {
+                "description": "The name of the owner of the service"
+            }
+        },
+        "sku": {
+            "type": "string",
+            "allowedValues": [
+                "Developer",
+                "Standard",
+                "Premium"
+            ],
+            "defaultValue": "Standard",
+            "metadata": {
+                "description": "The pricing tier of this API Management service"
+            }
+        },
+        "skuCount": {
+            "type": "string",
+            "allowedValues": [
+                "1",
+                "2"
+            ],
+            "defaultValue": "1",
+            "metadata": {
+                "description": "The instance size of this API Management service."
+            }
+        },
+        "projectTag": {
+            "type": "string",
+            "metadata": {
+                "description": "The project that resources in this template belong to"
+            }
+        },
+        "projectSubTag": {
+            "type": "string",
+            "metadata": {
+                "description": "The application that resources in this template belong to"
+            }
+        },
+        "environmentTag": {
+            "type": "string",
+            "metadata": {
+                "description": "The environment that resources in this template belong to"
+            }
+        },
+        "vnetResourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "vnet Resource group"
+            }
+        },
+        "vnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "The vnet that API management will be deployed to"
+            }
+        },
+        "subnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "The subnet that API management will be deployed to"
+            }
+        },
+        "clientID": {
+            "type": "string",
+            "metadata": {
+                "description": "The client ID of the developer portal"
+            }
+        },
+        "clientSecret": {
+            "type": "string",
+            "metadata": {
+                "description": "The client ID of the developer portal"
+            }
+        },
+        "certURI": {
+            "type": "string",
+            "metadata": {
+                "description": "Key Vault Secret URI of the certificate to be used for API Management"
+            }
+        },
+        "apimName": {
+            "type": "string",
+            "metadata": {
+                "description": "API Management Name to be used for API Management custom bindings"
+            }
+        },
+        "domainSuffix": {
+            "type": "string",
+            "metadata": {
+                "description": "Domain Suffix to be used for API Management custom bindings"
+            }
+        },
+        "aadTenant": {
+            "type": "string",
+            "metadata": {
+                "description": "Allowed aad tennat"
+            }
+        }
+    },
+    "variables": {
+        "subnetID": "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]",
+        "managementHostname": "[concat('management-',parameters('apimName'),'.',parameters('domainSuffix'))]",
+        "portalHostname": "[concat('portal-',parameters('apimName'),'.',parameters('domainSuffix'))]",
+        "proxyHostname": "[concat(parameters('apimName'),'.',parameters('domainSuffix'))]",
+        "scmHostname": "[concat('scm-',parameters('apimName'),'.',parameters('domainSuffix'))]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2017-03-01",
+            "name": "[parameters('serviceName')]",
+            "type": "Microsoft.ApiManagement/service",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "project": "[parameters('projectTag')]",
+                "project-sub": "[parameters('projectSubTag')]",
+                "environment": "[parameters('environmentTag')]"
+            },
+            "sku": {
+                "name": "[parameters('sku')]",
+                "capacity": "[parameters('skuCount')]"
+            },
+            "properties": {
+                "publisherEmail": "[parameters('publisherEmail')]",
+                "publisherName": "[parameters('publisherName')]",
+                "virtualNetworkConfiguration": {
+                    "subnetResourceId": "[variables('subnetID')]"
+                },
+                "virtualNetworkType": "Internal",
+                "hostnameConfigurations": [
+                    {
+                        "type": "Proxy",
+                        "hostName": "[variables('proxyHostname')]",
+                        "encodedCertificate": "[parameters('certURI')]",
+                        "certificatePassword": "",
+                        "defaultSslBinding": true
+                    },
+                    {
+                        "type": "Scm",
+                        "hostName": "[variables('scmHostname')]",
+                        "encodedCertificate": "[parameters('certURI')]",
+                        "certificatePassword": ""
+                    },
+                    {
+                        "type": "Management",
+                        "hostName": "[variables('managementHostname')]",
+                        "encodedCertificate": "[parameters('certURI')]",
+                        "certificatePassword": ""
+                    },
+                    {
+                        "type": "Portal",
+                        "hostName": "[variables('portalHostname')]",
+                        "encodedCertificate": "[parameters('certURI')]",
+                        "certificatePassword": ""
+                    }
+                ]
+            },
+            "resources": [
+                {
+                    "name": "aad",
+                    "dependsOn": [
+                        "[concat('Microsoft.ApiManagement/service/', parameters('serviceName'))]"
+                    ],
+                    "type": "identityProviders",
+                    "apiVersion": "2017-03-01",
+                    "properties": {
+                        "type": "aad",
+                        "allowedTenants": [
+                            "[parameters('aadTenant')]"
+                        ],
+                        "clientId": "[parameters('clientID')]",
+                        "clientSecret": "[parameters('clientSecret')]"
+                    }
+                }
+            ]
+        }
+    ]
+}

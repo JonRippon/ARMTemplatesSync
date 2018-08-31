@@ -1,0 +1,218 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "fwVmName": {
+            "type": "string"
+        },
+        "fwVmAddress": {
+            "type": "string"
+        },
+        "fwVmSize_Standard_LRS": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "fwVmSize_Premium_LRS": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "fwVmRootPasswd": {
+            "type": "securestring"
+        },
+        "fwSubnetName": {
+            "type": "string"
+        },
+        "fwSubnetAddress": {
+            "type": "string"
+        },
+        "publicIpName": {
+            "type": "string"
+        },
+        "publicIpDnsName": {
+            "type": "string"
+        },
+        "publicIpAddressType": {
+            "type": "string"
+        },
+        "newStorageAccountName": {
+            "type": "string"
+        },
+        "newStorageAccountType": {
+            "type": "string"
+        },
+        "vnetName": {
+            "type": "string"
+        },
+        "vnetAddressSpace": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "apiVersion": "2015-06-15",
+        "Nic1Name": "[concat( parameters( 'fwVmName' ), '-NIC1' )]",
+        "imagePublisher": "barracudanetworks",
+        "imageOffer": "barracuda-ng-firewall",
+        "imageSku": "byol",
+        "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',parameters('vnetName'))]",
+        "fwSubnetRef": "[concat(variables('vnetID'),'/subnets/',parameters('fwSubnetName'))]",
+        "publicIpRef": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('publicIPName'))]",
+        "defaultRouteTableName": "[concat( 'route-via-', parameters( 'fwVmName' ), '-', resourceGroup().name )]",
+        "vmStorageAccountContainerName": "vhds",
+        "fwSubnetSplit": "[split( parameters( 'fwSubnetAddress' ), '/' )]",
+        "fwSubnetAddrSplit": "[split( variables( 'fwSubnetSplit' )[0], '.' )]",
+        "fwSubnetMask": "[variables( 'fwSubnetSplit' )[1]]",
+        "fwSubnetDefaultGw": "[concat( variables( 'fwSubnetAddrSplit' )[0], '.', variables( 'fwSubnetAddrSplit' )[1], '.', variables( 'fwSubnetAddrSplit' )[2], '.', add( int( variables( 'fwSubnetAddrSplit' )[3]), 1 ))]",
+        "fwVmSize": "[parameters( concat( 'fwVmSize_', parameters( 'newStorageAccountType' )))]"
+    },
+    "resources": [
+        {
+            "apiVersion": "[variables( 'apiVersion' )]",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[parameters('publicIPName')]",
+            "location": "[parameters( 'location' )]",
+            "properties": {
+                "publicIPAllocationMethod": "[parameters('publicIpAddressType')]",
+                "dnsSettings": {
+                    "domainNameLabel": "[parameters('publicIpDnsName')]"
+                }
+            }
+        },
+        {
+            "apiVersion": "[variables( 'apiVersion' )]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[parameters('newStorageAccountName')]",
+            "location": "[parameters( 'location' )]",
+            "properties": {
+                "accountType": "[parameters('newStorageAccountType')]"
+            }
+        },
+        {
+            "apiVersion": "[variables( 'apiVersion' )]",
+            "type": "Microsoft.Network/routeTables",
+            "name": "[variables('defaultRouteTableName')]",
+            "location": "[parameters( 'location' )]",
+            "properties": {
+                "routes": [
+                    {
+                        "name": "defaultRouteViaNG",
+                        "properties": {
+                            "addressPrefix": "0.0.0.0/0",
+                            "nextHopType": "VirtualAppliance",
+                            "nextHopIpAddress": "[parameters('fwVmAddress')]"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "[variables( 'apiVersion' )]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[variables('Nic1Name')]",
+            "location": "[parameters( 'location' )]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters( 'vnetName' ))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig",
+                        "properties": {
+                            "enableIPForwarding": true,
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[parameters( 'fwVmAddress' )]",
+                            "subnet": {
+                                "id": "[variables( 'fwSubnetRef' )]"
+                            },
+                            "publicIPAddress": {
+                                "id": "[variables( 'publicIpRef' )]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "[variables( 'apiVersion' )]",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[parameters('vnetName')]",
+            "location": "[parameters( 'location' )]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('vnetAddressSpace')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[parameters( 'fwSubnetName' )]",
+                        "properties": {
+                            "addressPrefix": "[parameters( 'fwSubnetAddress' )]"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "[variables( 'apiVersion' )]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('fwVmName')]",
+            "location": "[parameters( 'location' )]",
+            "dependsOn": [
+                "[resourceId( 'Microsoft.Network/networkInterfaces', variables('Nic1Name') )]",
+                "[resourceId( 'Microsoft.Storage/storageAccounts', parameters( 'newStorageAccountName' ))]"
+            ],
+            "plan": {
+                "name": "[variables('imageSku')]",
+                "Product": "[variables('imageOffer')]",
+                "Publisher": "[variables('imagePublisher')]"
+            },
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[variables('fwVmSize')]"
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId( 'Microsoft.Network/networkInterfaces/',variables('Nic1Name'))]",
+                            "properties": {
+                                "primary": true
+                            }
+                        }
+                    ]
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('imagePublisher')]",
+                        "offer": "[variables('imageOffer')]",
+                        "sku": "[variables('imageSku')]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "[concat(parameters('fwVmName'),'-osDisk')]",
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage",
+                        "vhd": {
+                            "uri": "[concat('https://',parameters('newStorageAccountName'),'.blob.core.windows.net/',variables('vmStorageAccountContainerName'),'/',parameters('fwVmName'),'.vhd')]"
+                        }
+                    }
+                },
+                "osProfile": {
+                    "computerName": "[parameters('fwVmName')]",
+                    "adminUsername": "will-be-replaced-by-root",
+                    "adminPassword": "[parameters('fwVmRootPasswd')]",
+                    "customData": "[base64(concat('#!/bin/bash\n\n', '/opt/phion/bin/editconf -f /opt/phion/config/configroot/boxnet.conf -d REFS -s gendev_eth0\n', '/opt/phion/bin/editconf -f /opt/phion/config/configroot/boxnet.conf -d RENAMED -s gendev_eth0\n', '/opt/phion/bin/cloud-setmip ', parameters('fwVmAddress'), ' ', variables( 'fwSubnetMask' ), ' ', variables( 'fwSubnetDefaultGw' ), ' >> /tmp/setmip.log'))]"
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "publicIpDomainAddress": {
+            "type": "string",
+            "value": "[concat( parameters( 'publicIpDnsName' ), '.', parameters( 'location' ), '.cloudapp.azure.com' )]"
+        }
+    }
+}
